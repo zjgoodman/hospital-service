@@ -4,18 +4,12 @@ Query
 ```
 POST /hospitals
 {
-    filterByMeasures: [
+    filterByMeasure: [
         {
-            measureId: "op_31",
+            measure
             score: {
-                value: 50
-                operator: ge
-            },
-            plus: { // extra credit
-                type: "or"
-                criteria: {
-                    measureId: "op_22"
-                }
+                value
+                compare
             }
         }
     ]
@@ -41,11 +35,11 @@ Response
 
 Which state has the highest number of patients who left the emergency department before being seen (OP_22)?
 
-get hospitals that have measure OP_22
-group by state
-reduce to total number of patients affected
-return sorted list
-
+Query
+```
+GET /states/rankByMeasure?measure=OP_22
+```
+Response
 ```
 {
     measure
@@ -66,3 +60,8 @@ return sorted list
     ]
 }
 ```
+
+get hospitals that have measure OP_22
+group by state
+reduce to total number of patients affected
+return sorted list
