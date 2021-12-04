@@ -1,8 +1,8 @@
 from hospital_service.data.general_info.hospital_general_info_loader import (
-    load_csv,
     parse_hospital_info_from_csv,
 )
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
+from hospital_service.data.load_csv import load_csv
 
 
 def test_load_csv():

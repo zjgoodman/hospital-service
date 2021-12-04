@@ -1,18 +1,13 @@
 from typing import List
-import pandas as pd
-from fastapi import Depends
-from hospital_service.config import Settings, get_settings
+from hospital_service.config import get_settings
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
+from hospital_service.data.load_csv import load_csv, get_string
 
 
 def load_hospital_info():
     settings = get_settings()
     hospital_info = load_csv(settings.hospital_info_csv_file_name)
     return parse_hospital_info_from_csv(hospital_info)
-
-
-def load_csv(fileName):
-    return pd.read_csv(fileName)
 
 
 def parse_hospital_info_from_csv(csvData) -> List[HospitalGeneralInfo]:
@@ -76,7 +71,3 @@ def parse_hospital_info_from_row(row):
         CountofFacilityTEMeasures=get_string(row["Count of Facility TE Measures"]),
         TEGroupFootnote=get_string(row["TE Group Footnote"]),
     )
-
-
-def get_string(value):
-    return str(value) if "nan" != str(value) else ""
