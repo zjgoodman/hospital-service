@@ -7,6 +7,7 @@ from hospital_service.data.general_info.hospital_general_info_loader import (
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.measures.hospital_measures_loader import load_measures
+from functools import lru_cache
 
 
 class Hospital(BaseModel):
@@ -14,7 +15,16 @@ class Hospital(BaseModel):
     measures: List[HospitalMeasure]
 
 
-def get_hospitals() -> Dict:
+def get_hospitals() -> List[Hospital]:
+    hospitals = get_hospitals_as_dictionary().values()
+    return [
+        Hospital(general_info=hospital["general_info"], measures=hospital["measures"])
+        for hospital in hospitals
+    ]
+
+
+@lru_cache()
+def get_hospitals_as_dictionary() -> Dict:
     general_info: List[HospitalGeneralInfo] = load_hospital_info()
 
     hospitals_dict = {
