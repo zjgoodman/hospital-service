@@ -1,0 +1,6 @@
+"Facility ID","Facility Name","Address","City","State","ZIP Code","County Name","Phone Number","Condition","Measure ID","Measure Name","Score","Sample","Footnote","Start Date","End Date"
+010001,SOUTHEAST HEALTH MEDICAL CENTER,1108 ROSS CLARK CIRCLE,DOTHAN,AL,36301,Houston,(334) 793-8701,Emergency Department,EDV,Emergency department volume,high,,,01/01/2019,12/31/2019
+010001,SOUTHEAST HEALTH MEDICAL CENTER,1108 ROSS CLARK CIRCLE,DOTHAN,AL,36301,Houston,(334) 793-8701,Preventive Care,IMM_3,Healthcare workers given influenza vaccination,99,4119,,10/01/2020,03/31/2021
+010005,MARSHALL MEDICAL CENTERS,2505 U S HIGHWAY 431 NORTH,BOAZ,AL,35957,Marshall,(256) 593-8310,Emergency Department,EDV,Emergency department volume,very high,,,01/01/2019,12/31/2019
+010005,MARSHALL MEDICAL CENTERS,2505 U S HIGHWAY 431 NORTH,BOAZ,AL,35957,Marshall,(256) 593-8310,Preventive Care,IMM_3,Healthcare workers given influenza vaccination,93,2133,,10/01/2020,03/31/2021
+010005,MARSHALL MEDICAL CENTERS,2505 U S HIGHWAY 431 NORTH,BOAZ,AL,35957,Marshall,(256) 593-8310,Emergency Department,OP_18b,Average (median) time patients spent in the emergency department before leaving from the visit A lower number of minutes is better,139,478,,07/01/2020,12/31/2020

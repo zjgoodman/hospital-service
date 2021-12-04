@@ -1,6 +1,13 @@
 from typing import List
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
-from hospital_service.data.load_csv import get_string
+from hospital_service.data.load_csv import get_string, load_csv
+import hospital_service.config as config
+
+
+def load_measures() -> List[HospitalMeasure]:
+    settings = config.get_settings()
+    hospital_info = load_csv(settings.hospital_treatment_csv_file_name)
+    return parse_hospital_measures_from_csv(hospital_info)
 
 
 def parse_hospital_measures_from_csv(csvData) -> List[HospitalMeasure]:

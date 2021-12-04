@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
-from hospital_service.main import app, get_hospital_service
-from hospital_service.service import HospitalService
+from hospital_service.main import app
+from pytest_mock import MockerFixture
+from hospital_service.config import Settings
 
 client = TestClient(app)
 
@@ -11,20 +12,12 @@ def test_hello_world():
     assert response.json() == {"msg": "Hello World"}
 
 
-class DummyHospitalService(HospitalService):
-    def __init__(self, hospitals):
-        self.hospitals = hospitals
-
-    def get_hospitals(self):
-        return self.hospitals
-
-
-def test_get_hospitals():
-    expectedHospitals = [{"id": "1234", "name": "some hospital"}]
-    app.dependency_overrides[get_hospital_service] = lambda: DummyHospitalService(
-        expectedHospitals
+def test_get_hospitals(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures.csv",
     )
 
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
     response = client.get("/hospitals")
     assert response.status_code == 200
-    assert response.json() == expectedHospitals

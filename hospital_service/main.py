@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI
-from hospital_service.service import HospitalService
+import hospital_service.service as hospital_service
 
 app = FastAPI()
 
@@ -9,10 +9,6 @@ def hello_world():
     return {"msg": "Hello World"}
 
 
-def get_hospital_service():
-    return HospitalService()
-
-
 @app.get("/hospitals")
-def get_hospitals(hospital_service: HospitalService = Depends(get_hospital_service)):
+def get_hospitals():
     return hospital_service.get_hospitals()

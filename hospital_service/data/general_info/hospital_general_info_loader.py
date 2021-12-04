@@ -1,11 +1,11 @@
 from typing import List
-from hospital_service.config import get_settings
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.load_csv import load_csv, get_string
+import hospital_service.config as config
 
 
-def load_hospital_info():
-    settings = get_settings()
+def load_hospital_info() -> List[HospitalGeneralInfo]:
+    settings = config.get_settings()
     hospital_info = load_csv(settings.hospital_info_csv_file_name)
     return parse_hospital_info_from_csv(hospital_info)
 
