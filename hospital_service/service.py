@@ -1,7 +1,8 @@
 from typing import List
-from pydantic import BaseModel
-from hospital_service.data.loader import load_hospital_info
-from hospital_service.data.hospital_general_info import HospitalGeneralInfo
+from hospital_service.data.general_info.hospital_general_info_loader import (
+    load_hospital_info,
+)
+from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 
 
 class HospitalService:

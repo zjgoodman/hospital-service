@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 from fastapi import Depends
 from hospital_service.config import Settings, get_settings
-from hospital_service.data.hospital_general_info import HospitalGeneralInfo
+from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 
 
 def load_hospital_info():
