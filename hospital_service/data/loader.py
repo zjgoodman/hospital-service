@@ -21,42 +21,60 @@ def parse_hospital_info_from_csv(csvData) -> List[HospitalGeneralInfo]:
 
 def parse_hospital_info_from_row(row):
     return HospitalGeneralInfo(
-        id=str(row["Facility ID"]),
-        name=str(row["Facility ID"]),
-        streetAddress=str(row["Facility ID"]),
-        city=str(row["Facility ID"]),
-        state=str(row["Facility ID"]),
-        zip=str(row["Facility ID"]),
-        county=str(row["Facility ID"]),
-        phone=str(row["Facility ID"]),
-        type=str(row["Facility ID"]),
-        ownership=str(row["Facility ID"]),
-        offersEmergencyServices=None,
-        meetsEHRCriteria=None,
-        overallRating=None,
-        overallRatingNote=str(row["Facility ID"]),
-        mortGroupMeasureCount=None,
-        countOfFacilityMortMeasures=None,
-        countOfMortMeasuresBetter=None,
-        CountofMORTMeasuresNoDifferent=str(row["Facility ID"]),
-        CountofMORTMeasuresWorse=str(row["Facility ID"]),
-        MORTGroupFootnote=str(row["Facility ID"]),
-        SafetyGroupMeasureCount=str(row["Facility ID"]),
-        CountofFacilitySafetyMeasures=str(row["Facility ID"]),
-        CountofSafetyMeasuresBetter=str(row["Facility ID"]),
-        CountofSafetyMeasuresNoDifferent=str(row["Facility ID"]),
-        CountofSafetyMeasuresWorse=str(row["Facility ID"]),
-        SafetyGroupFootnote=str(row["Facility ID"]),
-        READMGroupMeasureCount=str(row["Facility ID"]),
-        CountofFacilityREADMMeasures=str(row["Facility ID"]),
-        CountofREADMMeasuresBetter=str(row["Facility ID"]),
-        CountofREADMMeasuresNoDifferent=str(row["Facility ID"]),
-        CountofREADMMeasuresWorse=str(row["Facility ID"]),
-        READMGroupFootnote=str(row["Facility ID"]),
-        PtExpGroupMeasureCount=str(row["Facility ID"]),
-        CountofFacilityPtExpMeasures=str(row["Facility ID"]),
-        PtExpGroupFootnote=str(row["Facility ID"]),
-        TEGroupMeasureCount=str(row["Facility ID"]),
-        CountofFacilityTEMeasures=str(row["Facility ID"]),
-        TEGroupFootnote=str(row["Facility ID"]),
+        id=get_string(row["Facility ID"]),
+        name=get_string(row["Facility Name"]),
+        streetAddress=get_string(row["Address"]),
+        city=get_string(row["City"]),
+        state=get_string(row["State"]),
+        zip=get_string(row["ZIP Code"]),
+        county=get_string(row["County Name"]),
+        phone=get_string(row["Phone Number"]),
+        type=get_string(row["Hospital Type"]),
+        ownership=get_string(row["Hospital Ownership"]),
+        offersEmergencyServices=get_string(row["Emergency Services"]),
+        meetsEHRCriteria=get_string(
+            row["Meets criteria for promoting interoperability of EHRs"]
+        ),
+        overallRating=get_string(row["Hospital overall rating"]),
+        overallRatingNote=get_string(row["Hospital overall rating footnote"]),
+        mortGroupMeasureCount=get_string(row["MORT Group Measure Count"]),
+        countOfFacilityMortMeasures=get_string(row["Count of Facility MORT Measures"]),
+        countOfMortMeasuresBetter=get_string(row["Count of MORT Measures Better"]),
+        CountofMORTMeasuresNoDifferent=get_string(
+            row["Count of MORT Measures No Different"]
+        ),
+        CountofMORTMeasuresWorse=get_string(row["Count of MORT Measures Worse"]),
+        MORTGroupFootnote=get_string(row["MORT Group Footnote"]),
+        SafetyGroupMeasureCount=get_string(row["Safety Group Measure Count"]),
+        CountofFacilitySafetyMeasures=get_string(
+            row["Count of Facility Safety Measures"]
+        ),
+        CountofSafetyMeasuresBetter=get_string(row["Count of Safety Measures Better"]),
+        CountofSafetyMeasuresNoDifferent=get_string(
+            row["Count of Safety Measures No Different"]
+        ),
+        CountofSafetyMeasuresWorse=get_string(row["Count of Safety Measures Worse"]),
+        SafetyGroupFootnote=get_string(row["Safety Group Footnote"]),
+        READMGroupMeasureCount=get_string(row["READM Group Measure Count"]),
+        CountofFacilityREADMMeasures=get_string(
+            row["Count of Facility READM Measures"]
+        ),
+        CountofREADMMeasuresBetter=get_string(row["Count of READM Measures Better"]),
+        CountofREADMMeasuresNoDifferent=get_string(
+            row["Count of READM Measures No Different"]
+        ),
+        CountofREADMMeasuresWorse=get_string(row["Count of READM Measures Worse"]),
+        READMGroupFootnote=get_string(row["READM Group Footnote"]),
+        PtExpGroupMeasureCount=get_string(row["Pt Exp Group Measure Count"]),
+        CountofFacilityPtExpMeasures=get_string(
+            row["Count of Facility Pt Exp Measures"]
+        ),
+        PtExpGroupFootnote=get_string(row["Pt Exp Group Footnote"]),
+        TEGroupMeasureCount=get_string(row["TE Group Measure Count"]),
+        CountofFacilityTEMeasures=get_string(row["Count of Facility TE Measures"]),
+        TEGroupFootnote=get_string(row["TE Group Footnote"]),
     )
+
+
+def get_string(value):
+    return str(value) if "nan" != str(value) else ""

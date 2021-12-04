@@ -1,4 +1,3 @@
-from typing import Optional
 from pydantic import BaseModel
 
 
@@ -18,13 +17,13 @@ class HospitalGeneralInfo(BaseModel):
     phone: str
     type: str
     ownership: str
-    offersEmergencyServices: Optional[bool] = None
-    meetsEHRCriteria: Optional[bool] = None
-    overallRating: Optional[int] = None
+    offersEmergencyServices: str
+    meetsEHRCriteria: str
+    overallRating: str
     overallRatingNote: str
-    mortGroupMeasureCount: Optional[int] = None
-    countOfFacilityMortMeasures: Optional[int] = None
-    countOfMortMeasuresBetter: Optional[int] = None
+    mortGroupMeasureCount: str
+    countOfFacilityMortMeasures: str
+    countOfMortMeasuresBetter: str
     CountofMORTMeasuresNoDifferent: str
     CountofMORTMeasuresWorse: str
     MORTGroupFootnote: str
