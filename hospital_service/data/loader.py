@@ -2,11 +2,13 @@ from typing import List
 import pandas as pd
 from fastapi import Depends
 from hospital_service.config import Settings, get_settings
-from hospital_service.service import HospitalGeneralInfo
+from hospital_service.data.hospital_general_info import HospitalGeneralInfo
 
 
-def load_hospital_info_csv(settings: Settings = Depends(get_settings)):
-    return load_csv(settings.hospital_info_csv_file_name)
+def load_hospital_info():
+    settings = get_settings()
+    hospital_info = load_csv(settings.hospital_info_csv_file_name)
+    return parse_hospital_info_from_csv(hospital_info)
 
 
 def load_csv(fileName):

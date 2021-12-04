@@ -8,5 +8,5 @@ def get_settings():
 
 
 class Settings(BaseSettings):
-    hospital_info_csv_file_name: str = ""
+    hospital_info_csv_file_name: str = "data/Hospital_General_Information.csv"
     hospital_treatment_csv_file_name: str = ""

@@ -1,5 +1,5 @@
 from hospital_service.data.loader import load_csv, parse_hospital_info_from_csv
-from hospital_service.service import HospitalGeneralInfo
+from hospital_service.data.hospital_general_info import HospitalGeneralInfo
 
 
 def test_load_csv():

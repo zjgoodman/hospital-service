@@ -1,47 +1,9 @@
+from typing import List
 from pydantic import BaseModel
+from hospital_service.data.loader import load_hospital_info
+from hospital_service.data.hospital_general_info import HospitalGeneralInfo
 
 
 class HospitalService:
-    def get_hospitals(self):
-        return []
-
-
-class HospitalGeneralInfo(BaseModel):
-    id: str
-    name: str
-    streetAddress: str
-    city: str
-    state: str
-    zip: str
-    county: str
-    phone: str
-    type: str
-    ownership: str
-    offersEmergencyServices: str
-    meetsEHRCriteria: str
-    overallRating: str
-    overallRatingNote: str
-    mortGroupMeasureCount: str
-    countOfFacilityMortMeasures: str
-    countOfMortMeasuresBetter: str
-    CountofMORTMeasuresNoDifferent: str
-    CountofMORTMeasuresWorse: str
-    MORTGroupFootnote: str
-    SafetyGroupMeasureCount: str
-    CountofFacilitySafetyMeasures: str
-    CountofSafetyMeasuresBetter: str
-    CountofSafetyMeasuresNoDifferent: str
-    CountofSafetyMeasuresWorse: str
-    SafetyGroupFootnote: str
-    READMGroupMeasureCount: str
-    CountofFacilityREADMMeasures: str
-    CountofREADMMeasuresBetter: str
-    CountofREADMMeasuresNoDifferent: str
-    CountofREADMMeasuresWorse: str
-    READMGroupFootnote: str
-    PtExpGroupMeasureCount: str
-    CountofFacilityPtExpMeasures: str
-    PtExpGroupFootnote: str
-    TEGroupMeasureCount: str
-    CountofFacilityTEMeasures: str
-    TEGroupFootnote: str
+    def get_hospitals(self) -> List[HospitalGeneralInfo]:
+        return load_hospital_info()
