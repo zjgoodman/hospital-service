@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from pydantic.main import BaseModel
 from hospital_service.data.general_info.hospital_general_info_loader import (
@@ -7,11 +7,13 @@ from hospital_service.data.general_info.hospital_general_info_loader import (
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.measures.hospital_measures_loader import load_measures
-from functools import lru_cache
+from functools import lru_cache, reduce
+import operator
+from fastapi import HTTPException
 
 
 class Hospital(BaseModel):
-    general_info: HospitalGeneralInfo
+    general_info: Optional[HospitalGeneralInfo]
     measures: List[HospitalMeasure]
 
 
@@ -23,38 +25,55 @@ def get_hospitals() -> List[Hospital]:
     ]
 
 
+score_compare_operators = {
+    "eq": operator.eq,
+    "le": operator.le,
+    "ge": operator.ge,
+    "lt": operator.lt,
+    "gt": operator.gt,
+    "ne": operator.ne,
+}
+
+
 def get_hospitals_by_criteria(
-    measureId: str, score: int, compare: str
+    measureId: Optional[str] = None,
+    score: Optional[int] = None,
+    score_compare_operator: str = "ge",
 ) -> List[Hospital]:
-    def contains_measure(hospital: Hospital) -> bool:
+    def meets_criteria(hospital: Hospital) -> bool:
         def measure_id_matches(measure: HospitalMeasure) -> bool:
-            return not measureId or measure.MeasureID == measureId
+            return measure.MeasureID == measureId
 
         def score_matches(measure: HospitalMeasure) -> bool:
-            # TODO compare operator
-            return not score or (
-                measure.Score.isdigit() and int(measure.Score) >= int(score)
+            score_compare_operator_function = score_compare_operators[
+                score_compare_operator
+            ]
+            if not score_compare_operator_function:
+                raise HTTPException(status_code=404, detail="Unsupported operator")
+            return measure.Score.isdigit() and score_compare_operator_function(
+                int(measure.Score), int(score)
             )
 
-        def measure_id_and_score_matches(measure: HospitalMeasure) -> bool:
-            return measure_id_matches(measure) and score_matches(measure)
+        filter_criteria = []
+        if measureId:
+            filter_criteria += [measure_id_matches]
+        if score:
+            filter_criteria += [score_matches]
 
-        filter_criteria = (
-            measure_id_and_score_matches if measureId and score else measure_id_matches
+        reduced_criteria = reduce(
+            lambda previousPredicate, thisPredicate: lambda measure: previousPredicate(
+                measure
+            )
+            and thisPredicate(measure),
+            filter_criteria,
+            lambda measure: True,
         )
-        return len(list(filter(filter_criteria, hospital.measures))) > 0
-
-    def contains_score(hospital: Hospital) -> bool:
-        return True  # TODO
-
-    def meets_criteria(hospital: Hospital) -> bool:
-        return contains_measure(hospital) and contains_score(hospital)
+        return len(list(filter(reduced_criteria, hospital.measures))) > 0
 
     all_hospitals = get_hospitals()  # TODO database side filtering
     return list(filter(meets_criteria, all_hospitals))
 
 
-@lru_cache()
 def get_hospitals_as_dictionary() -> Dict:
     general_info: List[HospitalGeneralInfo] = load_hospital_info()
 
@@ -70,4 +89,10 @@ def get_hospitals_as_dictionary() -> Dict:
 def add_measures_to_dictionary(hospitals_dict: Dict) -> None:
     measures: List[HospitalMeasure] = load_measures()
     for measure in measures:
-        hospitals_dict[measure.FacilityID]["measures"] += [measure]
+        if measure.FacilityID in hospitals_dict:
+            hospitals_dict[measure.FacilityID]["measures"] += [measure]
+        else:
+            hospitals_dict[measure.FacilityID] = {
+                "measures": [measure],
+                "general_info": None,
+            }

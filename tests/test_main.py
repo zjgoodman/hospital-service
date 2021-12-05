@@ -19,5 +19,6 @@ def test_get_hospitals(mocker: MockerFixture):
     )
 
     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
     response = client.get("/hospitals")
     assert response.status_code == 200
