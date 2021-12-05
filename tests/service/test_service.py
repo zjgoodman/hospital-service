@@ -138,8 +138,8 @@ def test_get_hospitals_by_measure_and_score(
 
 def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
     mock_settings: Settings = Settings(
-        hospital_info_csv_file_name="tests/service/test-hospital-info-filters.csv",
-        hospital_treatment_csv_file_name="tests/service/test-measures-filters.csv",
+        hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
     )
 
     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
@@ -150,11 +150,19 @@ def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
 
     assert rank_report.measure == "OP_22"
     assert rank_report.total_patients_impacted_by_measure == None  # TODO
-    assert len(rank_report.states) == 1
+    assert len(rank_report.states) == 2
 
-    state = rank_report.states[0]
+    stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
 
-    assert state.state == "AL"
-    assert state.rank == None  # TODO
-    assert state.total_patients_impacted_by_measure == None  # TODO
-    assert len(state.hospitals) == 99
+    assert stateAL.state == "AL"
+    assert stateAL.rank == None  # TODO
+    assert stateAL.total_patients_impacted_by_measure == None  # TODO
+    assert len(stateAL.hospitals) == 89
+    # assert len(stateAL.hospitals) == 99 TODO
+
+    stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
+
+    assert stateAK.state == "AK"
+    assert stateAK.rank == None  # TODO
+    assert stateAK.total_patients_impacted_by_measure == None  # TODO
+    assert len(stateAK.hospitals) == 1
