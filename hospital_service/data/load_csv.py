@@ -1,8 +1,8 @@
-import pandas as pd
+from pandas import read_csv
 
 
 def load_csv(fileName):
-    return pd.read_csv(fileName)
+    return read_csv(fileName)
 
 
 def get_string(value):
