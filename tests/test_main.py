@@ -6,12 +6,6 @@ from hospital_service.config import Settings
 client = TestClient(app)
 
 
-def test_hello_world():
-    response = client.get("/hello")
-    assert response.status_code == 200
-    assert response.json() == {"msg": "Hello World"}
-
-
 def test_get_hospitals(mocker: MockerFixture):
     mock_settings: Settings = Settings(
         hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
