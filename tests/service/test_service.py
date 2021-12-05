@@ -77,11 +77,11 @@ def test_get_hospitals_by_measure_op_22(mocker: MockerFixture):
 
 score_operators_expectations = [
     ("eq", 1),
-    ("ge", 1),
-    ("le", 1),
-    ("gt", 0),
-    ("lt", 0),
-    ("ne", 0),
+    ("ge", 2),
+    ("le", 2),
+    ("gt", 1),
+    ("lt", 1),
+    ("ne", 2),
 ]
 
 
@@ -98,7 +98,7 @@ def test_get_hospitals_by_score_operator(
 
     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
 
-    score = 1
+    score = 2
     actual_hospitals: List[Hospital] = get_hospitals_by_criteria(
         score=score, score_compare_operator=score_compare_operator
     )
