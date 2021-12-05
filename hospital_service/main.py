@@ -26,7 +26,8 @@ def validate_score_compare_operator(
     score: Optional[int], score_compare_operator: Optional[str]
 ):
     if (score and not score_compare_operator) or (
-        score_compare_operator not in acceptable_score_compare_operators
+        score_compare_operator
+        and score_compare_operator not in acceptable_score_compare_operators
     ):
         raise HTTPException(
             status_code=400,
