@@ -19,14 +19,14 @@ class Hospital(BaseModel):
 
 class StateRankByHospitalMeasure(BaseModel):
     state: str
-    rank: int
-    total_patients_impacted_by_measure: int
+    rank: Optional[int]
+    total_patients_impacted_by_measure: Optional[int]
     hospitals: List[Hospital]
 
 
 class RankStatesByHospitalMeasure(BaseModel):
     measure: str
-    total_patients_impacted_by_measure: int
+    total_patients_impacted_by_measure: Optional[int]
     states: List[StateRankByHospitalMeasure]
 
 
@@ -142,12 +142,12 @@ def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalM
     states_to_hospitals = get_hospitals_by_state(measureId)
     return RankStatesByHospitalMeasure(
         measure=measureId,
-        total_patients_impacted_by_measure=0,
+        total_patients_impacted_by_measure=None,
         states=[
             StateRankByHospitalMeasure(
                 state=entry["state"],
-                rank=0,
-                total_patients_impacted_by_measure=0,
+                rank=None,
+                total_patients_impacted_by_measure=None,
                 hospitals=entry["hospitals"],
             )
             for entry in states_to_hospitals

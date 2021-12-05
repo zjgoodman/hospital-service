@@ -149,12 +149,12 @@ def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
     )
 
     assert rank_report.measure == "OP_22"
-    assert rank_report.total_patients_impacted_by_measure == 0  # TODO
+    assert rank_report.total_patients_impacted_by_measure == None  # TODO
     assert len(rank_report.states) == 1
 
     state = rank_report.states[0]
 
     assert state.state == "AL"
-    assert state.rank == 0  # TODO
-    assert state.total_patients_impacted_by_measure == 0  # TODO
+    assert state.rank == None  # TODO
+    assert state.total_patients_impacted_by_measure == None  # TODO
     assert len(state.hospitals) == 99
