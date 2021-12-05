@@ -105,3 +105,20 @@ def add_measures_to_dictionary(hospitals_dict: Dict) -> None:
                 "measures": [measure],
                 "general_info": None,
             }
+
+
+def get_hospitals_by_state():
+    hospitals: List[Hospital] = get_hospitals()
+    states_to_hospitals = {}
+    for hospital in filter(
+        lambda hospital: hospital.general_info and hospital.general_info.state,
+        hospitals,
+    ):
+        state = hospital.general_info.state
+        if not state in states_to_hospitals:
+            states_to_hospitals[state] = []
+        states_to_hospitals[state] += [hospital]
+        # should use generator for better performance
+    return [
+        {"state": key, "hospitals": value} for key, value in states_to_hospitals.items()
+    ]

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi import Depends, FastAPI, HTTPException
 import hospital_service.service as hospital_service
 
@@ -15,6 +15,11 @@ def get_hospitals(
     return hospital_service.get_hospitals_by_criteria(
         measureId, score, score_compare_operator
     )
+
+
+@app.get("/hospitals/getByState")
+def get_hospitals_by_state():
+    return hospital_service.get_hospitals_by_state()
 
 
 acceptable_score_compare_operators = [
