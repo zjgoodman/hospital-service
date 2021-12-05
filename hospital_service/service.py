@@ -38,9 +38,19 @@ score_compare_operators = {
 def get_hospitals_by_criteria(
     measureId: Optional[str] = None,
     score: Optional[int] = None,
-    score_compare_operator: str = "ge",
+    score_compare_operator: str = "eq",
 ) -> List[Hospital]:
-    def meets_criteria(hospital: Hospital) -> bool:
+    filter_criteria = get_filter_criteria(measureId, score, score_compare_operator)
+    all_hospitals = get_hospitals()  # TODO database side filtering
+    return list(filter(filter_criteria, all_hospitals))
+
+
+def get_filter_criteria(
+    measureId: Optional[str],
+    score: Optional[int],
+    score_compare_operator: str,
+):
+    def hospital_matches_criteria(hospital: Hospital) -> bool:
         def measure_id_matches(measure: HospitalMeasure) -> bool:
             return measure.MeasureID == measureId
 
@@ -54,24 +64,23 @@ def get_hospitals_by_criteria(
                 int(measure.Score), int(score)
             )
 
-        filter_criteria = []
+        filter_predicates = []
         if measureId:
-            filter_criteria += [measure_id_matches]
+            filter_predicates += [measure_id_matches]
         if score:
-            filter_criteria += [score_matches]
+            filter_predicates += [score_matches]
 
-        reduced_criteria = reduce(
+        filter_predicate = reduce(
             lambda previousPredicate, thisPredicate: lambda measure: previousPredicate(
                 measure
             )
             and thisPredicate(measure),
-            filter_criteria,
+            filter_predicates,
             lambda measure: True,
         )
-        return len(list(filter(reduced_criteria, hospital.measures))) > 0
+        return len(list(filter(filter_predicate, hospital.measures))) > 0
 
-    all_hospitals = get_hospitals()  # TODO database side filtering
-    return list(filter(meets_criteria, all_hospitals))
+    return hospital_matches_criteria
 
 
 def get_hospitals_as_dictionary() -> Dict:
