@@ -18,8 +18,13 @@ def get_hospitals(
 
 
 @app.get("/hospitals/getByState")
-def get_hospitals_by_state():
-    return hospital_service.get_hospitals_by_state()
+def get_hospitals_by_state(measureId: Optional[str] = None):
+    return hospital_service.get_hospitals_by_state(measureId)
+
+
+@app.get("/hospitals/getByState/rankByMeasure")
+def get_hospitals_by_state_ranked_by_measure(measureId: str):
+    return hospital_service.get_hospitals_by_state_ranked_by_measure(measureId)
 
 
 acceptable_score_compare_operators = [

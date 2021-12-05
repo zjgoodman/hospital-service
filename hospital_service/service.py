@@ -7,7 +7,7 @@ from hospital_service.data.general_info.hospital_general_info_loader import (
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.measures.hospital_measures_loader import load_measures
-from functools import lru_cache, reduce
+from functools import reduce
 import operator
 from fastapi import HTTPException
 
@@ -15,6 +15,19 @@ from fastapi import HTTPException
 class Hospital(BaseModel):
     general_info: Optional[HospitalGeneralInfo]
     measures: List[HospitalMeasure]
+
+
+class StateRankByHospitalMeasure(BaseModel):
+    state: str
+    rank: int
+    total_patients_impacted_by_measure: int
+    hospitals: List[Hospital]
+
+
+class RankStatesByHospitalMeasure(BaseModel):
+    measure: str
+    total_patients_impacted_by_measure: int
+    states: List[StateRankByHospitalMeasure]
 
 
 def get_hospitals() -> List[Hospital]:
@@ -107,7 +120,8 @@ def add_measures_to_dictionary(hospitals_dict: Dict) -> None:
             }
 
 
-def get_hospitals_by_state():
+def get_hospitals_by_state(measureId: Optional[str] = None):
+    # hospitals: List[Hospital] = get_hospitals_by_criteria(measureId=measureId)
     hospitals: List[Hospital] = get_hospitals()
     states_to_hospitals = {}
     for hospital in filter(
@@ -122,3 +136,20 @@ def get_hospitals_by_state():
     return [
         {"state": key, "hospitals": value} for key, value in states_to_hospitals.items()
     ]
+
+
+def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalMeasure:
+    states_to_hospitals = get_hospitals_by_state(measureId)
+    return RankStatesByHospitalMeasure(
+        measure=measureId,
+        total_patients_impacted_by_measure=0,
+        states=[
+            StateRankByHospitalMeasure(
+                state=entry["state"],
+                rank=0,
+                total_patients_impacted_by_measure=0,
+                hospitals=entry["hospitals"],
+            )
+            for entry in states_to_hospitals
+        ],
+    )

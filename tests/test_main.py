@@ -51,3 +51,27 @@ def test_get_hospitals_by_state(mocker: MockerFixture):
     response = client.get("/hospitals/getByState")
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+# def test_get_hospitals_by_state_ranked_by_measure_without_param(mocker: MockerFixture):
+#     mock_settings: Settings = Settings(
+#         hospital_info_csv_file_name="tests/service/test-hospital-info-filters.csv",
+#         hospital_treatment_csv_file_name="tests/service/test-measures-filters.csv",
+#     )
+
+#     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+#     response = client.get("/hospitals/getByState/rankByMeasure")
+#     assert response.status_code == 400
+
+
+def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info-filters.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-filters.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    response = client.get("/hospitals/getByState/rankByMeasure?measureId=OP_22")
+    assert response.status_code == 200

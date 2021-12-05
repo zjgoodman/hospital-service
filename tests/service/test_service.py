@@ -1,9 +1,11 @@
 from typing import Dict, List
 from hospital_service.service import (
+    RankStatesByHospitalMeasure,
     get_hospitals,
     get_hospitals_as_dictionary,
     Hospital,
     get_hospitals_by_criteria,
+    get_hospitals_by_state_ranked_by_measure,
 )
 import hospital_service.config as config
 from hospital_service.config import Settings
@@ -132,3 +134,27 @@ def test_get_hospitals_by_measure_and_score(
     )
 
     assert len(actual_hospitals) == expected_count
+
+
+def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info-filters.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-filters.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    rank_report: RankStatesByHospitalMeasure = get_hospitals_by_state_ranked_by_measure(
+        "OP_22"
+    )
+
+    assert rank_report.measure == "OP_22"
+    assert rank_report.total_patients_impacted_by_measure == 0  # TODO
+    assert len(rank_report.states) == 1
+
+    state = rank_report.states[0]
+
+    assert state.state == "AL"
+    assert state.rank == 0  # TODO
+    assert state.total_patients_impacted_by_measure == 0  # TODO
+    assert len(state.hospitals) == 99
