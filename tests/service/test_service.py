@@ -158,7 +158,6 @@ def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
     assert stateAL.rank == None  # TODO
     assert stateAL.total_patients_impacted_by_measure == None  # TODO
     assert len(stateAL.hospitals) == 89
-    # assert len(stateAL.hospitals) == 99 TODO
 
     stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
 

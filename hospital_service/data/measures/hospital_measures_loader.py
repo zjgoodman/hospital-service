@@ -1,4 +1,6 @@
-from typing import List
+from typing import List, Optional
+
+from pydantic.types import OptionalInt
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.load_csv import get_string, load_csv
 import hospital_service.config as config
@@ -23,14 +25,31 @@ def parse_hospital_measures_from_csv(csvData) -> List[HospitalMeasure]:
 
 
 def parse_hospital_measure_from_row(row):
+    measure_id = get_string(row["Measure ID"])
+    score = get_string(row["Score"])
+    sample = get_string(row["Sample"])
+    patients_affected: OptionalInt = get_patients_affected(measure_id, score, sample)
     return HospitalMeasure(
         FacilityID=get_string(row["Facility ID"]),
         Condition=get_string(row["Condition"]),
-        MeasureID=get_string(row["Measure ID"]),
         MeasureName=get_string(row["Measure Name"]),
-        Score=get_string(row["Score"]),
-        Sample=get_string(row["Sample"]),
         Footnote=get_string(row["Footnote"]),
         StartDate=get_string(row["Start Date"]),
         EndDate=get_string(row["End Date"]),
+        MeasureID=measure_id,
+        Score=score,
+        Sample=sample,
+        PatientsAffected=patients_affected,
     )
+
+
+def get_patients_affected(measure_id, score, sample) -> OptionalInt:
+    if (
+        not score
+        or not sample
+        or not measure_id == "OP_22"
+        or score == "Not Available"
+        or sample == "Not Available"
+    ):
+        return None
+    return int(int(score) / 100 * int(sample))

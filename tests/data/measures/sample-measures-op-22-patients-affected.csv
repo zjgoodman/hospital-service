@@ -1,0 +1,7 @@
+"Facility ID","Facility Name","Address","City","State","ZIP Code","County Name","Phone Number","Condition","Measure ID","Measure Name","Score","Sample","Footnote","Start Date","End Date"
+010001,SOUTHEAST HEALTH MEDICAL CENTER,1108 ROSS CLARK CIRCLE,DOTHAN,AL,36301,Houston,(334) 793-8701,Preventive Care,IMM_3,Healthcare workers given influenza vaccination,99,4119,,10/01/2020,03/31/2021
+010022,CHEROKEE MEDICAL CENTER,400 NORTHWOOD DR,CENTRE,AL,35960,Cherokee,(256) 927-5531,Emergency Department,OP_22,Left before being seen,Not Available,Not Available,5,01/01/2019,12/31/2019
+010008,CRENSHAW COMMUNITY HOSPITAL,101 HOSPITAL CIRCLE,LUVERNE,AL,36049,Crenshaw,(334) 335-3374,Emergency Department,OP_22,Left before being seen,0,7485,,01/01/2019,12/31/2019
+010006,NORTH ALABAMA MEDICAL CENTER,1701 VETERANS DRIVE,FLORENCE,AL,35630,Lauderdale,(256) 768-8400,Emergency Department,OP_22,Left before being seen,1,47004,,01/01/2019,12/31/2019
+010007,MIZELL MEMORIAL HOSPITAL,702 N MAIN ST,OPP,AL,36467,Covington,(334) 493-3541,Emergency Department,OP_22,Left before being seen,2,12514,,01/01/2019,12/31/2019
+010012,DEKALB REGIONAL MEDICAL CENTER,200 MED CENTER DRIVE,FORT PAYNE,AL,35968,DeKalb,(256) 845-3150,Emergency Department,OP_22,Left before being seen,3,23955,,01/01/2019,12/31/2019
