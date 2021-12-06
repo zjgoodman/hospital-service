@@ -203,6 +203,40 @@ def test_rank_states_by_patients_affected():
     assert state_reports["FL"].rank == 0
 
 
+def test_rank_states_by_patients_affected_tie():
+    state_reports = {
+        "TX": StateRankByHospitalMeasure(
+            state="TX", total_patients_impacted_by_measure=1, hospitals=[]
+        ),
+        "TN": StateRankByHospitalMeasure(
+            state="TN", total_patients_impacted_by_measure=1, hospitals=[]
+        ),
+        "FL": StateRankByHospitalMeasure(
+            state="FL", total_patients_impacted_by_measure=3, hospitals=[]
+        ),
+    }
+    rank_states_by_patients_affected(list(state_reports.values()))
+    assert state_reports["TX"].rank == 1
+    assert state_reports["TN"].rank == 1
+    assert state_reports["FL"].rank == 0
+
+
+def test_rank_states_by_patients_affected_none():
+    state_reports = {
+        "TX": StateRankByHospitalMeasure(state="TX", hospitals=[]),
+        "TN": StateRankByHospitalMeasure(
+            state="TN", total_patients_impacted_by_measure=5, hospitals=[]
+        ),
+        "FL": StateRankByHospitalMeasure(
+            state="FL", total_patients_impacted_by_measure=3, hospitals=[]
+        ),
+    }
+    rank_states_by_patients_affected(list(state_reports.values()))
+    assert state_reports["TX"].rank == None
+    assert state_reports["TN"].rank == 0
+    assert state_reports["FL"].rank == 1
+
+
 # def test_get_hospitals_by_state_ranked_by_measure_rank(mocker: MockerFixture):
 #     mock_settings: Settings = Settings(
 #         hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
