@@ -13,6 +13,18 @@ The goal of this project is to provide an api that supports queries on hospital 
     - [Querying for state rankings by measure](#querying-for-state-rankings-by-measure)
     - [Querying for hospitals grouped by state](#querying-for-hospitals-grouped-by-state)
 - [Retrospective](#retrospective)
+  - [The good](#the-good)
+    - [Unit tests](#unit-tests)
+    - [Score compare operators as a query param](#score-compare-operators-as-a-query-param)
+    - [Query flexibility](#query-flexibility)
+    - [State ranking](#state-ranking)
+    - [Poetry](#poetry)
+  - [The bad](#the-bad)
+    - [Learning curve](#learning-curve)
+    - [Type checking](#type-checking)
+    - [Persistent storage](#persistent-storage)
+  - [The ugly](#the-ugly)
+    - [Performance](#performance)
 
 # Running the app
 There are two ways to run the app:
@@ -43,7 +55,7 @@ Once you have [started the app](#running-the-app) you can interact with it. Swag
 ## Sample queries
 The project [instructions](instructions.md) ask for support for two different types of queries:
 1. [#querying-for-measures-and-scores-of-hospitals](#querying-for-measures-and-scores-of-hospitals)
-2. Which state has the highest number of patients who left the emergency department before being seen (OP_22)?
+2. [#querying-for-state-rankings-by-measure](#querying-for-state-rankings-by-measure)
 
 ### Querying for measures and scores of hospitals
 > For hospitals with Measure ID = 'OP_31' AND Score >= 50, what are those hospitals' overall ratings?
@@ -362,4 +374,38 @@ Response (truncated):
 ```
 
 # Retrospective
-TODO
+Implementing this project was a lot of fun. This was my first *real* python project (I am a Java developer). Working with python was kinda tricky sometimes (especially getting mocks working in the unit tests) but overall I am pleased with the result.
+
+I spent roughly 15 hours on this project. The instructions said to stop at 5 hours but truthfully I hadn't made very much progress by that point ([this](https://github.com/zjgoodman/hospital-service/tree/3e8db542cb627d0756886336acd3220665173f4e) is how far I got). Being new to python, I moved a lot slower than I would if I were working with Java.
+
+## The good
+### Unit tests
+I am most proud of the quality and level of unit testing that I implemented in the app. :heart_eyes: I practiced test driven development throughout the app, writing my tests before writing my code. Admittedly it definitely slowed me down a lot since I am new to python, pytest and pytest-mock. If I had skipped testing entirely I surely would have completed this project sooner but I would have little confidence that it works at all. Plus I would be terrified to try to add new functionality for fearing of breaking the whole thing. :fire:
+
+### Score compare operators as a query param
+I am pretty satisfied with the app's ability to handle score compare operators as a query param. See [#querying-for-measures-and-scores-of-hospitals](#querying-for-measures-and-scores-of-hospitals) for details. 
+
+### Query flexibility
+Overall query flexibility is pretty good too. The instructions requested only `OP_31` as a measure id but I went ahead and implemented it as a dynamic query param since in production we would most likely want to be able to make such queries. The app also supports querying for score and measure ID as separate queries.
+
+### State ranking
+I am also very pleased with how well my state ranking api turned out. The instructions asked only for the HIGHEST ranking state, but my api provides a complete ranking of all the states. I figure in production we would most likely need to be able to query for 1st, 2nd, 3rd, etc and so I opted to have the api return the complete rankings (including ties) because it seemed like a more flexible design.
+
+### Poetry
+This was my first time using `poetry` for python. In java we have `maven` and `gradle` so poetry for python felt natural. It worked well.
+
+## The bad
+### Learning curve
+As mentioned before this was my first time working a project using python. The learning curve was a lot. I am certain that I didn't follow "the pythonic way" for much of my code. 
+
+### Type checking
+I wasn't able to implement type checking with MyPy. It's probably really easy to do but after sinking 10 hours in over the requested stopping point, I think this is good enough for now. :sweat_smile:
+
+### Persistent storage
+I didn't implement persistent storage. I did some thinking in the begining about what kind of database to use (sql, document oriented, graphDB) and figured I would probably go with a document oriented database if I had the time just because I know how to work with that.. In production I think this app would work best with an AP (Availability/Partition tolerant - see [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem)) database like Cassandra since this would be a READ heavy app with likely very few writes. 
+
+## The ugly
+### Performance
+Performance is really bad, particularly on the first request on app startup. This is because I'm loading and transforming the data on the fly instead of reading from a persistent storage (see [#persistent-storage](#persistent-storage)). I partially augment this by using `@lru_cache()` for reading from the csv file but I still need to transform the data on the fly.
+
+The payload size also plays a part in this. Instead of returning the entire hospital data I could cut down to returning IDs or something similar. Perhaps also implementing this with GraphQL could help. Pagination could also be a good way of improving perceived performance.
