@@ -122,7 +122,6 @@ def add_measures_to_dictionary(hospitals_dict: Dict) -> None:
 
 def get_hospitals_by_state(measureId: Optional[str] = None):
     hospitals: List[Hospital] = get_hospitals_by_criteria(measureId=measureId)
-    # hospitals: List[Hospital] = get_hospitals()
     states_to_hospitals = {}
     for hospital in filter(
         lambda hospital: hospital.general_info and hospital.general_info.state,
