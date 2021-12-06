@@ -6,8 +6,8 @@ from hospital_service.service import (
     Hospital,
     get_hospitals_by_criteria,
     get_hospitals_by_state_ranked_by_measure,
+    get_total_patients_impacted_by_measure,
 )
-import hospital_service.config as config
 from hospital_service.config import Settings
 from pytest_mock import MockerFixture
 import pytest
@@ -136,7 +136,7 @@ def test_get_hospitals_by_measure_and_score(
     assert len(actual_hospitals) == expected_count
 
 
-def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
+def test_get_hospitals_by_state_ranked_by_measure_total_patients(mocker: MockerFixture):
     mock_settings: Settings = Settings(
         hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
         hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
@@ -155,13 +155,26 @@ def test_get_hospitals_by_state_ranked_by_measure(mocker: MockerFixture):
     stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
 
     assert stateAL.state == "AL"
-    assert stateAL.rank == None  # TODO
-    assert stateAL.total_patients_impacted_by_measure == None  # TODO
+    assert stateAL.total_patients_impacted_by_measure == 32038
     assert len(stateAL.hospitals) == 89
 
     stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
 
     assert stateAK.state == "AK"
-    assert stateAK.rank == None  # TODO
-    assert stateAK.total_patients_impacted_by_measure == None  # TODO
+    assert stateAK.total_patients_impacted_by_measure == 238
     assert len(stateAK.hospitals) == 1
+
+
+def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
+        hospital_treatment_csv_file_name="tests/data/measures/sample-measures-op-22-patients-affected.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    hospitals: List[Hospital] = get_hospitals()
+    measure_id: str = "OP_22"
+
+    actual_total = get_total_patients_impacted_by_measure(hospitals, measure_id)
+    assert actual_total == 1438

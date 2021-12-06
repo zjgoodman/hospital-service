@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 
 from pydantic.main import BaseModel
+from pydantic.types import OptionalInt
 from hospital_service.data.general_info.hospital_general_info_loader import (
     load_hospital_info,
 )
@@ -136,9 +137,29 @@ def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalM
             StateRankByHospitalMeasure(
                 state=entry["state"],
                 rank=None,
-                total_patients_impacted_by_measure=None,
+                total_patients_impacted_by_measure=get_total_patients_impacted_by_measure(
+                    entry["hospitals"], measureId
+                ),
                 hospitals=entry["hospitals"],
             )
             for entry in states_to_hospitals
         ],
+    )
+
+
+def get_total_patients_impacted_by_measure(
+    hospitals: List[Hospital], measure_id: str
+) -> OptionalInt:
+    all_measures: List[HospitalMeasure] = [
+        measure for hospital in hospitals for measure in hospital.measures
+    ]
+    return sum(
+        map(
+            lambda measure: measure.PatientsAffected,
+            filter(
+                lambda measure: measure.MeasureID == measure_id
+                and measure.PatientsAffected != None,
+                all_measures,
+            ),
+        )
     )

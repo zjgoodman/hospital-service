@@ -5,6 +5,7 @@ from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.load_csv import get_string, load_csv
 import hospital_service.config as config
 from functools import lru_cache
+import numpy as np
 
 
 def load_measures() -> List[HospitalMeasure]:
@@ -25,9 +26,9 @@ def parse_hospital_measures_from_csv(csvData) -> List[HospitalMeasure]:
 
 
 def parse_hospital_measure_from_row(row):
-    measure_id = get_string(row["Measure ID"])
-    score = get_string(row["Score"])
-    sample = get_string(row["Sample"])
+    measure_id: str = get_string(row["Measure ID"])
+    score: str = get_string(row["Score"])
+    sample: str = get_string(row["Sample"])
     patients_affected: OptionalInt = get_patients_affected(measure_id, score, sample)
     return HospitalMeasure(
         FacilityID=get_string(row["Facility ID"]),
@@ -52,4 +53,4 @@ def get_patients_affected(measure_id, score, sample) -> OptionalInt:
         or sample == "Not Available"
     ):
         return None
-    return int(int(score) / 100 * int(sample))
+    return int(int(score) / 100 * int(float(sample)))
