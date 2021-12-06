@@ -149,7 +149,6 @@ def test_get_hospitals_by_state_ranked_by_measure_total_patients(mocker: MockerF
     )
 
     assert rank_report.measure == "OP_22"
-    assert rank_report.total_patients_impacted_by_measure == None  # TODO
     assert len(rank_report.states) == 2
 
     stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
@@ -163,6 +162,25 @@ def test_get_hospitals_by_state_ranked_by_measure_total_patients(mocker: MockerF
     assert stateAK.state == "AK"
     assert stateAK.total_patients_impacted_by_measure == 238
     assert len(stateAK.hospitals) == 1
+
+
+def test_get_hospitals_by_state_ranked_by_measure_total_patients_for_all_states(
+    mocker: MockerFixture,
+):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    rank_report: RankStatesByHospitalMeasure = get_hospitals_by_state_ranked_by_measure(
+        "OP_22"
+    )
+
+    assert rank_report.measure == "OP_22"
+    assert rank_report.total_patients_impacted_by_measure == 32276
+    assert len(rank_report.states) == 2
 
 
 def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):

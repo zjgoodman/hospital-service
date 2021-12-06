@@ -128,22 +128,36 @@ def get_hospitals_by_state(measureId: Optional[str] = None):
     ]
 
 
-def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalMeasure:
+def get_state_reports(measureId: str) -> List[StateRankByHospitalMeasure]:
     states_to_hospitals = get_hospitals_by_state(measureId)
+    return [
+        StateRankByHospitalMeasure(
+            state=state_to_hospital_mapping["state"],
+            total_patients_impacted_by_measure=get_total_patients_impacted_by_measure(
+                state_to_hospital_mapping["hospitals"], measureId
+            ),
+            hospitals=state_to_hospital_mapping["hospitals"],
+        )
+        for state_to_hospital_mapping in states_to_hospitals
+    ]
+
+
+def get_total_patients_in_all_states(state_reports: List[StateRankByHospitalMeasure]):
+    return sum(
+        map(
+            lambda state_report: state_report.total_patients_impacted_by_measure,
+            state_reports,
+        )
+    )
+
+
+def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalMeasure:
+    state_reports: List[StateRankByHospitalMeasure] = get_state_reports(measureId)
+    total_patients_in_all_states = get_total_patients_in_all_states(state_reports)
     return RankStatesByHospitalMeasure(
         measure=measureId,
-        total_patients_impacted_by_measure=None,
-        states=[
-            StateRankByHospitalMeasure(
-                state=entry["state"],
-                rank=None,
-                total_patients_impacted_by_measure=get_total_patients_impacted_by_measure(
-                    entry["hospitals"], measureId
-                ),
-                hospitals=entry["hospitals"],
-            )
-            for entry in states_to_hospitals
-        ],
+        total_patients_impacted_by_measure=total_patients_in_all_states,
+        states=state_reports,
     )
 
 
