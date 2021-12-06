@@ -1,13 +1,13 @@
 from hospital_service.data.load_csv import load_csv
-from hospital_service.data.measures.hospital_measures_loader import (
+from hospital_service.data.hospital_measures_loader import (
     parse_hospital_measures_from_csv,
 )
-from hospital_service.data.measures.hospital_measures import HospitalMeasure
+from hospital_service.models.hospital_measures import HospitalMeasure
 import pytest
 
 
 def test_load_csv():
-    csvData = load_csv("tests/data/measures/sample-measures.csv")
+    csvData = load_csv("tests/data/sample-measures.csv")
     actual_measures = parse_hospital_measures_from_csv(csvData)
 
     assert len(actual_measures) == 1
@@ -36,9 +36,7 @@ op_22_patients_affected_expectations = [
     "score_to_match,expected_patients_affected", op_22_patients_affected_expectations
 )
 def test_patients_affected_op_22(score_to_match, expected_patients_affected):
-    csvData = load_csv(
-        "tests/data/measures/sample-measures-op-22-patients-affected.csv"
-    )
+    csvData = load_csv("tests/data/sample-measures-op-22-patients-affected.csv")
     actual_measures = parse_hospital_measures_from_csv(csvData)
     op_22_measures_with_matching_score = list(
         filter(
@@ -54,9 +52,7 @@ def test_patients_affected_op_22(score_to_match, expected_patients_affected):
 
 
 def test_patients_affected_is_null_when_op_22_score_not_available():
-    csvData = load_csv(
-        "tests/data/measures/sample-measures-op-22-patients-affected.csv"
-    )
+    csvData = load_csv("tests/data/sample-measures-op-22-patients-affected.csv")
     actual_measures = parse_hospital_measures_from_csv(csvData)
     score_not_available_measures = list(
         filter(
@@ -72,9 +68,7 @@ def test_patients_affected_is_null_when_op_22_score_not_available():
 
 
 def test_patients_affected_is_null_when_NOT_op_22():
-    csvData = load_csv(
-        "tests/data/measures/sample-measures-op-22-patients-affected.csv"
-    )
+    csvData = load_csv("tests/data/sample-measures-op-22-patients-affected.csv")
     actual_measures = parse_hospital_measures_from_csv(csvData)
     non_op_22_measures = list(
         filter(lambda measure: measure.MeasureID != "OP_22", actual_measures)

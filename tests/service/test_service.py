@@ -1,15 +1,19 @@
 from typing import Dict, List
 from hospital_service.service import (
-    RankStatesByHospitalMeasure,
-    StateRankByHospitalMeasure,
     get_hospitals,
     get_hospitals_as_dictionary,
-    Hospital,
     get_hospitals_by_criteria,
     get_hospitals_by_state_ranked_by_measure,
     get_total_patients_impacted_by_measure,
     get_total_patients_in_all_states,
     rank_states_by_patients_affected,
+)
+from hospital_service.models.hospital import Hospital
+from hospital_service.models.rank_states_by_hospital_measure import (
+    RankStatesByHospitalMeasure,
+)
+from hospital_service.models.state_rank_by_hospital_measure import (
+    StateRankByHospitalMeasure,
 )
 from hospital_service.config import Settings
 from pytest_mock import MockerFixture
@@ -265,7 +269,7 @@ def test_get_hospitals_by_state_ranked_by_measure_rank(mocker: MockerFixture):
 def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):
     mock_settings: Settings = Settings(
         hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
-        hospital_treatment_csv_file_name="tests/data/measures/sample-measures-op-22-patients-affected.csv",
+        hospital_treatment_csv_file_name="tests/data/sample-measures-op-22-patients-affected.csv",
     )
 
     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
@@ -282,7 +286,7 @@ def test_get_total_patients_impacted_by_measure_unsupported_measure(
 ):
     mock_settings: Settings = Settings(
         hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
-        hospital_treatment_csv_file_name="tests/data/measures/sample-measures-op-22-patients-affected.csv",
+        hospital_treatment_csv_file_name="tests/data/sample-measures-op-22-patients-affected.csv",
     )
 
     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)

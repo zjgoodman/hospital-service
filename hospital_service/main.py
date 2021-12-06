@@ -1,5 +1,5 @@
-from typing import List, Optional
-from fastapi import Depends, FastAPI, HTTPException
+from typing import Optional
+from fastapi import FastAPI
 import hospital_service.service as hospital_service
 from hospital_service.validation import validate_score_compare_operator
 

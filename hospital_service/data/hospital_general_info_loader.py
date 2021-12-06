@@ -1,5 +1,5 @@
 from typing import List
-from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
+from hospital_service.models.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.load_csv import load_csv, get_string
 import hospital_service.config as config
 from functools import lru_cache

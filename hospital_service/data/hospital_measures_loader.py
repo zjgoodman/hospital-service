@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from pydantic.types import OptionalInt
-from hospital_service.data.measures.hospital_measures import HospitalMeasure
+from hospital_service.models.hospital_measures import HospitalMeasure
 from hospital_service.data.load_csv import get_string, load_csv
 import hospital_service.config as config
 from functools import lru_cache

@@ -1,33 +1,22 @@
 from typing import Dict, List, Optional
 
-from pydantic.main import BaseModel
 from pydantic.types import OptionalInt
-from hospital_service.data.general_info.hospital_general_info_loader import (
+from hospital_service.data.hospital_general_info_loader import (
     load_hospital_info,
 )
-from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
-from hospital_service.data.measures.hospital_measures import HospitalMeasure
-from hospital_service.data.measures.hospital_measures_loader import load_measures
+from hospital_service.data.hospital_measures_loader import load_measures
+from hospital_service.models.hospital import Hospital
+from hospital_service.models.hospital_general_info import HospitalGeneralInfo
+from hospital_service.models.hospital_measures import HospitalMeasure
+from hospital_service.models.state_rank_by_hospital_measure import (
+    StateRankByHospitalMeasure,
+)
+from hospital_service.models.rank_states_by_hospital_measure import (
+    RankStatesByHospitalMeasure,
+)
 from hospital_service.validation import score_compare_operators
 from functools import reduce
 from fastapi import HTTPException
-
-
-class Hospital(BaseModel):
-    general_info: Optional[HospitalGeneralInfo]
-    measures: List[HospitalMeasure]
-
-
-class StateRankByHospitalMeasure(BaseModel):
-    state: str
-    rank: Optional[int]
-    total_patients_impacted_by_measure: Optional[int]
-
-
-class RankStatesByHospitalMeasure(BaseModel):
-    measure: str
-    total_patients_impacted_by_measure: Optional[int]
-    states: List[StateRankByHospitalMeasure]
 
 
 def get_hospitals() -> List[Hospital]:

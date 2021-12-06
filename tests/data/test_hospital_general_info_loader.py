@@ -1,12 +1,12 @@
-from hospital_service.data.general_info.hospital_general_info_loader import (
+from hospital_service.data.hospital_general_info_loader import (
     parse_hospital_info_from_csv,
 )
-from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
+from hospital_service.models.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.load_csv import load_csv
 
 
 def test_load_csv():
-    csvData = load_csv("tests/data/general_info/test-hospital-info.csv")
+    csvData = load_csv("tests/data/test-hospital-info.csv")
     actual_hospital_info_list = parse_hospital_info_from_csv(csvData)
 
     assert len(actual_hospital_info_list) == 1
