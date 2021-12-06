@@ -1,12 +1,14 @@
 from typing import Dict, List
 from hospital_service.service import (
     RankStatesByHospitalMeasure,
+    StateRankByHospitalMeasure,
     get_hospitals,
     get_hospitals_as_dictionary,
     Hospital,
     get_hospitals_by_criteria,
     get_hospitals_by_state_ranked_by_measure,
     get_total_patients_impacted_by_measure,
+    rank_states_by_patients_affected,
 )
 from hospital_service.config import Settings
 from pytest_mock import MockerFixture
@@ -181,6 +183,50 @@ def test_get_hospitals_by_state_ranked_by_measure_total_patients_for_all_states(
     assert rank_report.measure == "OP_22"
     assert rank_report.total_patients_impacted_by_measure == 32276
     assert len(rank_report.states) == 2
+
+
+def test_rank_states_by_patients_affected():
+    state_reports = {
+        "TX": StateRankByHospitalMeasure(
+            state="TX", total_patients_impacted_by_measure=1, hospitals=[]
+        ),
+        "TN": StateRankByHospitalMeasure(
+            state="TN", total_patients_impacted_by_measure=2, hospitals=[]
+        ),
+        "FL": StateRankByHospitalMeasure(
+            state="FL", total_patients_impacted_by_measure=3, hospitals=[]
+        ),
+    }
+    rank_states_by_patients_affected(list(state_reports.values()))
+    assert state_reports["TX"].rank == 2
+    assert state_reports["TN"].rank == 1
+    assert state_reports["FL"].rank == 0
+
+
+# def test_get_hospitals_by_state_ranked_by_measure_rank(mocker: MockerFixture):
+#     mock_settings: Settings = Settings(
+#         hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
+#         hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
+#     )
+
+#     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+#     rank_report: RankStatesByHospitalMeasure = get_hospitals_by_state_ranked_by_measure(
+#         "OP_22"
+#     )
+
+#     assert rank_report.measure == "OP_22"
+#     assert len(rank_report.states) == 2
+
+#     stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
+
+#     assert stateAL.state == "AL"
+#     assert stateAL.rank == 1
+
+#     stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
+
+#     assert stateAK.state == "AK"
+#     assert stateAK.rank == 2
 
 
 def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):

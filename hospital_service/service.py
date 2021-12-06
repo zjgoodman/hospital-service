@@ -153,12 +153,52 @@ def get_total_patients_in_all_states(state_reports: List[StateRankByHospitalMeas
 
 def get_hospitals_by_state_ranked_by_measure(measureId) -> RankStatesByHospitalMeasure:
     state_reports: List[StateRankByHospitalMeasure] = get_state_reports(measureId)
+    rank_states_by_patients_affected(state_reports)
     total_patients_in_all_states = get_total_patients_in_all_states(state_reports)
     return RankStatesByHospitalMeasure(
         measure=measureId,
         total_patients_impacted_by_measure=total_patients_in_all_states,
         states=state_reports,
     )
+
+
+def rank_states_by_patients_affected(
+    state_reports: List[StateRankByHospitalMeasure],
+) -> None:
+    patients_affected_in_each_state = get_ranked_patients_affected_in_each_state(
+        state_reports
+    )
+    for state_report in state_reports:
+        if (
+            state_report.total_patients_impacted_by_measure
+            in patients_affected_in_each_state
+        ):
+            state_rank: int = patients_affected_in_each_state.index(
+                state_report.total_patients_impacted_by_measure
+            )
+            state_report.rank = state_rank
+
+
+def get_ranked_patients_affected_in_each_state(
+    state_reports: List[StateRankByHospitalMeasure],
+) -> List[int]:
+    patients_affected_in_each_state = list(
+        sorted(
+            list(
+                set(
+                    map(
+                        lambda state_report: state_report.total_patients_impacted_by_measure,
+                        filter(
+                            lambda state_report: state_report.total_patients_impacted_by_measure,
+                            state_reports,
+                        ),
+                    )
+                )
+            )
+        )
+    )
+    patients_affected_in_each_state.reverse()
+    return patients_affected_in_each_state
 
 
 def get_total_patients_impacted_by_measure(
