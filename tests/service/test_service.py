@@ -8,6 +8,7 @@ from hospital_service.service import (
     get_hospitals_by_criteria,
     get_hospitals_by_state_ranked_by_measure,
     get_total_patients_impacted_by_measure,
+    get_total_patients_in_all_states,
     rank_states_by_patients_affected,
 )
 from hospital_service.config import Settings
@@ -157,13 +158,11 @@ def test_get_hospitals_by_state_ranked_by_measure_total_patients(mocker: MockerF
 
     assert stateAL.state == "AL"
     assert stateAL.total_patients_impacted_by_measure == 32038
-    assert len(stateAL.hospitals) == 89
 
     stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
 
     assert stateAK.state == "AK"
     assert stateAK.total_patients_impacted_by_measure == 238
-    assert len(stateAK.hospitals) == 1
 
 
 def test_get_hospitals_by_state_ranked_by_measure_total_patients_for_all_states(
@@ -237,30 +236,30 @@ def test_rank_states_by_patients_affected_none():
     assert state_reports["FL"].rank == 1
 
 
-# def test_get_hospitals_by_state_ranked_by_measure_rank(mocker: MockerFixture):
-#     mock_settings: Settings = Settings(
-#         hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
-#         hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
-#     )
+def test_get_hospitals_by_state_ranked_by_measure_rank(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info-state.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-state.csv",
+    )
 
-#     mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
 
-#     rank_report: RankStatesByHospitalMeasure = get_hospitals_by_state_ranked_by_measure(
-#         "OP_22"
-#     )
+    rank_report: RankStatesByHospitalMeasure = get_hospitals_by_state_ranked_by_measure(
+        "OP_22"
+    )
 
-#     assert rank_report.measure == "OP_22"
-#     assert len(rank_report.states) == 2
+    assert rank_report.measure == "OP_22"
+    assert len(rank_report.states) == 2
 
-#     stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
+    stateAL = list(filter(lambda state: state.state == "AL", rank_report.states))[0]
 
-#     assert stateAL.state == "AL"
-#     assert stateAL.rank == 1
+    assert stateAL.state == "AL"
+    assert stateAL.rank == 0
 
-#     stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
+    stateAK = list(filter(lambda state: state.state == "AK", rank_report.states))[0]
 
-#     assert stateAK.state == "AK"
-#     assert stateAK.rank == 2
+    assert stateAK.state == "AK"
+    assert stateAK.rank == 1
 
 
 def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):
@@ -276,3 +275,44 @@ def test_get_total_patients_impacted_by_measure(mocker: MockerFixture):
 
     actual_total = get_total_patients_impacted_by_measure(hospitals, measure_id)
     assert actual_total == 1438
+
+
+def test_get_total_patients_impacted_by_measure_unsupported_measure(
+    mocker: MockerFixture,
+):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
+        hospital_treatment_csv_file_name="tests/data/measures/sample-measures-op-22-patients-affected.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    hospitals: List[Hospital] = get_hospitals()
+    measure_id: str = "OP_31"
+
+    actual_total = get_total_patients_impacted_by_measure(hospitals, measure_id)
+    assert actual_total == None
+
+
+def test_get_total_patients_impacted_by_measure_none(mocker: MockerFixture):
+    mock_settings: Settings = Settings(
+        hospital_info_csv_file_name="tests/service/test-hospital-info.csv",
+        hospital_treatment_csv_file_name="tests/service/test-measures-op-22-score-not-available.csv",
+    )
+
+    mocker.patch("hospital_service.config.get_settings", return_value=mock_settings)
+
+    hospitals: List[Hospital] = get_hospitals()
+    measure_id: str = "OP_22"
+
+    actual_total = get_total_patients_impacted_by_measure(hospitals, measure_id)
+    assert actual_total == None
+
+
+def test_get_total_patients_in_all_states():
+    state_reports: List[StateRankByHospitalMeasure] = [
+        StateRankByHospitalMeasure(state="TX", total_patients_impacted_by_measure=1),
+        StateRankByHospitalMeasure(state="TN", total_patients_impacted_by_measure=None),
+    ]
+    actual_total: int = get_total_patients_in_all_states(state_reports)
+    assert actual_total == 1

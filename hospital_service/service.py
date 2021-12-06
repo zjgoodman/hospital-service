@@ -22,7 +22,6 @@ class StateRankByHospitalMeasure(BaseModel):
     state: str
     rank: Optional[int]
     total_patients_impacted_by_measure: Optional[int]
-    hospitals: List[Hospital]
 
 
 class RankStatesByHospitalMeasure(BaseModel):
@@ -136,7 +135,6 @@ def get_state_reports(measureId: str) -> List[StateRankByHospitalMeasure]:
             total_patients_impacted_by_measure=get_total_patients_impacted_by_measure(
                 state_to_hospital_mapping["hospitals"], measureId
             ),
-            hospitals=state_to_hospital_mapping["hospitals"],
         )
         for state_to_hospital_mapping in states_to_hospitals
     ]
@@ -144,9 +142,12 @@ def get_state_reports(measureId: str) -> List[StateRankByHospitalMeasure]:
 
 def get_total_patients_in_all_states(state_reports: List[StateRankByHospitalMeasure]):
     return sum(
-        map(
-            lambda state_report: state_report.total_patients_impacted_by_measure,
-            state_reports,
+        filter(
+            lambda value: value != None,
+            map(
+                lambda state_report: state_report.total_patients_impacted_by_measure,
+                state_reports,
+            ),
         )
     )
 
@@ -207,7 +208,7 @@ def get_total_patients_impacted_by_measure(
     all_measures: List[HospitalMeasure] = [
         measure for hospital in hospitals for measure in hospital.measures
     ]
-    return sum(
+    patients_impacted_for_each_matching_measure = list(
         map(
             lambda measure: measure.PatientsAffected,
             filter(
@@ -216,4 +217,9 @@ def get_total_patients_impacted_by_measure(
                 all_measures,
             ),
         )
+    )
+    return (
+        sum(patients_impacted_for_each_matching_measure)
+        if patients_impacted_for_each_matching_measure
+        else None
     )
