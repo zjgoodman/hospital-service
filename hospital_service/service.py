@@ -7,8 +7,8 @@ from hospital_service.data.general_info.hospital_general_info_loader import (
 from hospital_service.data.general_info.hospital_general_info import HospitalGeneralInfo
 from hospital_service.data.measures.hospital_measures import HospitalMeasure
 from hospital_service.data.measures.hospital_measures_loader import load_measures
+from hospital_service.validation import score_compare_operators
 from functools import reduce
-import operator
 from fastapi import HTTPException
 
 
@@ -36,16 +36,6 @@ def get_hospitals() -> List[Hospital]:
         Hospital(general_info=hospital["general_info"], measures=hospital["measures"])
         for hospital in hospitals
     ]
-
-
-score_compare_operators = {
-    "eq": operator.eq,
-    "le": operator.le,
-    "ge": operator.ge,
-    "lt": operator.lt,
-    "gt": operator.gt,
-    "ne": operator.ne,
-}
 
 
 def get_hospitals_by_criteria(
