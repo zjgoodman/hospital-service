@@ -68,7 +68,7 @@ def get_filter_criteria(
             )
             and thisPredicate(measure),
             filter_predicates,
-            lambda measure: True,
+            lambda _: True,
         )
         return len(list(filter(filter_predicate, hospital.measures))) > 0
 
